@@ -9,7 +9,7 @@ try{
     value.author = req.userId;
     const post = new Post(value);
     await post.save();
-    res.json({msg : "post created"});
+    res.json(post);
 }
 catch(err){
     res.status(500).json(err);
@@ -60,12 +60,28 @@ const getPost = async (req,res)=>{
         if(!post) return res.status(404).json({error : "no such post exist"})
         const {postData,postImages} = post;
         const author = await User.findOne({_id : post.author}).username
-        res.json({postData,postImages,author,likes:post.likes.length,comments : post.comments.length});
+        res.json({postId:post._id,postData,postImages,author,likes:post.likes.length,comments : post.comments.length});
     }
     catch(err){
         res.status(500).json(err)
     }
 }
 
+// liking a post
+const likePost = async (req,res)=>{
+    try{
+        // get the post
+        const post = await Post.findOne({_id : req.params.id});
+        if(!post) return res.status(404).json({error : "no such post"});
+        const likedUsers = [...post.likes,req.userId];
+        post.set({likes : likedUsers});
+        await post.save();
+        res.json({success : true});
+    }
+    catch(err){
+        res.status(500).json(err);
+    }
+}
 
-module.exports = {getPost,updatePost,deletePost,createPost};
+
+module.exports = {getPost,updatePost,deletePost,createPost,likePost};
