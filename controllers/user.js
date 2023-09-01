@@ -7,7 +7,7 @@ async function getUser(req,res){
         
     const username = req.params.id;
     const user = await User.findOne({username});
-    if(!user) return res.status(400).json({error : "No user found"});
+    if(!user) return res.json({error : "No user found"});
 
     // send back info about user
    

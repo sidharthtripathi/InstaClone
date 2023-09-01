@@ -8,18 +8,18 @@ const jwt = require('jsonwebtoken')
 const login = async (req,res)=>{
     try{
         const {error,value} = loginSchema.validate(req.body);
-        if(error) return res.status(404).json(error);
+        if(error) return res.json({...error,error : error.details[0].message});
         // check if username and password is correct
         const {username,password} = value;
         const user = await User.findOne({username});
-        if(!user) return res.status(404).json({error : `No user with username ${username}`});
+        if(!user) return res.json({error : `No user with username ${username}`});
         // check password
         const result = await bcrypt.compare(password,user.password);
-        if(!result) return res.status(404).json({error : "Wrong password"});
+        if(!result) return res.json({error : "Wrong password"});
         
         // else create jwt token
         const jwtToken = jwt.sign({username,userId:user._id},process.env.JWT_KEY);
-        res.send({'Auth-Token' : jwtToken});
+        res.json({'Auth-Token' : jwtToken});
 
     }
     catch(err){
@@ -33,11 +33,12 @@ const register = async (req,res)=>{
     try{
         // validate req body
         const {error,value} = registerSchema.validate(req.body);
-        if(error) return res.status(400).json(error);
+        if(error) return res.json({...error,error : error.details[0].message});
         // else proceed to create account
         // check if username taken
-        const preUser = User.findOne({username : value.username})
-        if(preUser) return res.status(400).json({error : "user already exist"})
+        
+        const preUser = await User.findOne({username : value.username})
+        if(preUser) return res.json({error : "user already exist"})
         // hash password before storing
         const hashedPass = await bcrypt.hash(value.password,10);
         const user = new User({...value,password : hashedPass});
@@ -54,7 +55,7 @@ const register = async (req,res)=>{
 const verify = (req,res,next)=>{
     try{
         const jwtToken = req.headers['auth-token'];
-        if(!jwtToken) return res.status(404).json({error : "Provide Auth-Token in headers"});
+        if(!jwtToken) return res.json({error : "Provide Auth-Token in headers"});
         const verifiedToken = jwt.verify(jwtToken,process.env.JWT_KEY);
         // if fails falls into error
         req.username = verifiedToken.username;
@@ -63,7 +64,7 @@ const verify = (req,res,next)=>{
     }
     catch(err){
         console.log(err);
-        res.status(404).json({error : "Invalid Token"});
+        res.json({error : "Invalid Token"});
     }
 }
 
