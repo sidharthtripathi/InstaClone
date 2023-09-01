@@ -1,5 +1,5 @@
 const express = require('express')
-const verify = require('../controllers/auth/verify')
+const {verify} = require('../controllers/auth')
 const {getPost,updatePost,deletePost,createPost,likePost} = require('../controllers/post')
 const postRouter = express.Router();
 

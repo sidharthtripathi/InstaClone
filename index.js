@@ -17,7 +17,7 @@ const authRouter = require('./routes/auth')
 
 // setting up routes
 app.get('/',(req,res)=>{
-    res.send('welcome to twitter...')
+    res.send('welcome to instagram...')
 })
 
 app.use('/post',postRouter);
