@@ -16,6 +16,7 @@ app.use(bodyParser.urlencoded({extended : true}));
 const postRouter = require('./routes/post')
 const userRouter = require('./routes/user')
 const authRouter = require('./routes/auth')
+const requestRouter = require('./routes/request')
 
 // setting up routes
 
@@ -23,6 +24,7 @@ const authRouter = require('./routes/auth')
 app.use('/post',postRouter);
 app.use('/user',userRouter);
 app.use('/auth',authRouter);
+app.use('/request',requestRouter)
 
 
 

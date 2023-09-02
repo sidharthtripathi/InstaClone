@@ -1,5 +1,5 @@
 const User = require('../models/user')
-
+const getFollowingStatus = require('../utils/getFollowingStatus')
 // get user
 
 async function getUser(req, res) {
@@ -8,25 +8,11 @@ async function getUser(req, res) {
         const username = req.params.id;
         const user = await User.findOne({ username });
         if (!user) return res.json({ error: "No user found" });
-        let followingStatus = '';
 
-        // check if requesting user follows the requested user
-        const u = user.followers.find(u=>u===req.username);
-        if(u) followingStatus = 'following'
-        else followingStatus = 'notFollowing'
-
-        // check if requesting and requested user is same
-        if (req.params.id === req.username) {
-            followingStatus = 'current';
-        }
-        else{
-            const pendingReq = user.request.find(u => u === req.username)
-            if (pendingReq) followingStatus = 'pending'
-        }
-
-
+        // check following status
+        const followingStatus = await getFollowingStatus(req.username,user);
+        
         // send back info about user
-
         const followersCount = user.followersCount;
         const followingsCount = user.followingsCount;
 
@@ -56,6 +42,28 @@ async function sendRequest(req, res) {
     catch (err) {
         res.json(err);
     }
+}
+
+async function cancelRequest(req,res){
+    const user = await User.findOne({username : req.params.id});
+    if(!user) return res.json({error : "No such user"});
+
+    // if request is there remove it, if not keep it same
+    
+    const reqArr = user.request.filter(u=>(u!==req.username))
+    user.request = reqArr;
+    await user.save();
+    res.json({msg : "request pulled back"});
+}
+
+async function deleteRequest(req,res){
+    const user = req.params.id;
+    // update the request array
+    let primaryUser =  await User.findOne({username : req.username})
+    let reqArr = primaryUser.request.filter(u=>(u!=user));
+    primaryUser.request = reqArr;
+    await primaryUser.save()
+    res.send({msg : "request deleted"})
 }
 
 async function togglePublic(req, res) {
@@ -101,4 +109,4 @@ async function acceptRequest(req, res) {
     }
 }
 
-module.exports = { acceptRequest, sendRequest, togglePublic, getUser };
+module.exports = { acceptRequest, sendRequest, togglePublic, getUser , cancelRequest , deleteRequest};
