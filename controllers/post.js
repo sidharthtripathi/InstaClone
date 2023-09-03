@@ -5,7 +5,7 @@ const User = require('../models/user')
 const createPost = async (req,res)=>{
 try{
     const {error,value} = postSchema.validate(req.body);
-    if(error) return res.status(400).json(error)
+    if(error) return res.json(error)
     value.author = req.userId;
     const post = new Post(value);
     await post.save();
@@ -83,5 +83,18 @@ const likePost = async (req,res)=>{
     }
 }
 
+async function getAllPosts(req,res){
+    try{
+    const user = await User.findOne({username : req.params.userid})
+    const allPost = await Post.find({author : user._id})
+    res.json(allPost)
+    }
+    catch(err){
+        console.log(err)
+        res.json(err);
+    }
+}
 
-module.exports = {getPost,updatePost,deletePost,createPost,likePost};
+
+
+module.exports = {getPost,updatePost,deletePost,createPost,likePost,getAllPosts};

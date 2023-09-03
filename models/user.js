@@ -51,6 +51,8 @@ const userSchema = new mongoose.Schema({
         ref : 'comment'
     }
 
+},{
+    timestamps : true
 })
 
 const User = mongoose.model('user',userSchema,'user');

@@ -1,4 +1,5 @@
-const User = require('../models/user')
+const User = require('../models/user');
+const getRequestData = require('../utils/getRequestData.js')
 async function acceptRequest(req, res) {
     try {
         const requestingUser = req.params.id; // user whose request is to be accepted
@@ -70,5 +71,17 @@ async function sendRequest(req, res) {
     }
 }
 
+async function getRequest(req,res){
+    try{
+    const username = req.username;
+    const data = await getRequestData(username);
+    res.json(data);
+    }
+    catch(err){
+        res.json(err);
+    }
+    
+}
 
-module.exports = {sendRequest,cancelRequest,acceptRequest,deleteRequest}
+
+module.exports = {sendRequest,cancelRequest,acceptRequest,deleteRequest,getRequest}
