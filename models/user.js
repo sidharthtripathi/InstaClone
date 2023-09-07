@@ -35,17 +35,20 @@ const userSchema = new mongoose.Schema({
         default : true
     },
     // data related to his connections
-    followers : [String],
-    followersCount : {
-        type : Number,
-        default : 0
+    followers : {
+        type : [mongoose.Schema.Types.ObjectId],
+        ref :  "user"
+
     },
-    followings : [String],
-    followingsCount : {
-        type : Number,
-        default : 0
+    followings : {
+        type : [mongoose.Schema.Types.ObjectId],
+        ref : 'user'
+
     },
-    request : [String],
+    request : {
+        type : [mongoose.Schema.Types.ObjectId],
+        ref : "user"
+    },
     comment : {
         type : [mongoose.Schema.Types.ObjectId],
         ref : 'comment'
