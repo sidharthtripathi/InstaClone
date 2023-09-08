@@ -90,9 +90,17 @@ const likePost = async (req,res)=>{
 
 async function getAllPosts(req,res){
     try{
-    const user = await User.findOne({username : req.params.username}).select("_id")
-    const allPost = await Post.find({author : user._id}).select(["postData","postImages"])
-    res.json(allPost)
+    const user = await User.findOne({username : req.params.username}).select(["_id","avatar","username"])
+    if(!user) return res.json({error : "No such user"})
+    const allPost = await Post.find({author : user._id}).select(["postData","postImages","_id"]).sort({createdAt : -1})
+    const data = {
+        user : {
+            avatar : user.avatar,
+            username : user.username,
+        },
+        allPost
+    }
+    res.json(data)
     }
     catch(err){
         console.log(err)
@@ -100,6 +108,18 @@ async function getAllPosts(req,res){
     }
 }
 
+const getFeed = async (req,res)=>{
+    try{
+    // get all the peep he follows
+    const user = await User.findOne({username : req.username}).select(["followings"])
+    const posts = await Post.find({author : {$in:user.followings}}).populate({path : "author" , select : ["avatar","username"]}).select(["postData","postImages"]).sort({createdAt : -1})
+    res.json(posts)
+    }
+    catch(err){
+        res.json(err);
+    }
+}
 
 
-module.exports = {getPost,updatePost,deletePost,createPost,likePost,getAllPosts};
+
+module.exports = {getPost,updatePost,deletePost,createPost,likePost,getAllPosts , getFeed};

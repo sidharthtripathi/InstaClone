@@ -1,11 +1,12 @@
 const express = require('express')
 const {verify} = require('../controllers/auth')
-const {getPost,updatePost,deletePost,createPost,likePost,getAllPosts} = require('../controllers/post')
+const {getPost,updatePost,deletePost,createPost,likePost,getAllPosts , getFeed} = require('../controllers/post')
 const postRouter = express.Router();
 
 // viewing post ( public or private func not added yet)
 postRouter.get('/postid/:id',getPost);
-postRouter.get('/all/:userid',verify,getAllPosts);
+postRouter.get('/all/:username',verify,getAllPosts);
+postRouter.get('/feed',verify,getFeed);
 
 // creating post for verified user
 postRouter.post('/create',verify,createPost);
