@@ -24,8 +24,14 @@ const userSchema = new mongoose.Schema({
         type : String,
         required : true,
     },
-    avatar : String,
-    coverImage : String,
+    avatar : {
+        type : String,
+        default : 'https://www.elevenforum.com/data/attachments/45/45622-423967e182ed610e64465704d26689f8.jpg'
+    },
+    coverImage :{
+        type : String,
+        default : "https://tokystorage.s3.amazonaws.com/images/default-cover.png"
+    },
     bio : {
         type : String,
         minLength : 1

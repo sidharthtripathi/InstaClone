@@ -6,6 +6,9 @@ const mongoose = require('mongoose');
 const cors = require('cors')
 const socket  = require('socket.io')
 const jwt = require('jsonwebtoken')
+const {verify} = require('./controllers/auth')
+const {sendChats} = require('./controllers/chat.js')
+const Message = require('./models/message')
 // setting up env variables
 dotenv.config();
 // setting up server and middlewares
@@ -28,6 +31,7 @@ app.use('/post',postRouter);
 app.use('/user',userRouter);
 app.use('/auth',authRouter);
 app.use('/request',requestRouter)
+app.get('/chats',verify,sendChats)
 
 
 // socket 
@@ -45,7 +49,7 @@ io.use((socket, next) => {
         const verified = jwt.verify(authToken,process.env.JWT_KEY)
         socket.username = verified.username;
         socket.userId = verified.userId;
-        socket.join(socket.username);
+        socket.join(socket.userId);
         next();
     }
     catch(error){
@@ -56,25 +60,35 @@ io.use((socket, next) => {
 io.on('connection', (socket) => {
     // sending a personal message
     socket.on('personal-msg', async(data) => {
-        if (!data.reciever) return;
+        if (!data.to.userId) return;
         const msg = {
-            msg: data.msg,
-            sender: socket.username
+            message: data.message,
+            from : {
+                userId : socket.userId,
+                username  : socket.username,
+                avatar : data.from.avatar
+            },
+            to : {
+                userId : data.to.userId
+            }
+            
         }
         const newMsg = new Message({
-            sender : socket.username,
-            reciever : data.reciever,
-            message : data.msg
+            sender : socket.userId,
+            reciever : data.to.userId,
+            message : data.message
         })
-        socket.to(data.reciever).emit('personal-msg', msg)
-        await newMsg.save();
+        socket.to(data.to.userId).emit('personal-msg', msg)
+        try{await newMsg.save();}
+        catch(err){console.log(err)}
     })
 
     // deleting room of the leaving client
     socket.on('disconnect', () => {
         socket.leave(socket.name);
     })
-})
+}
+)
 
 
 

@@ -19,7 +19,19 @@ const login = async (req,res)=>{
         
         // else create jwt token
         const jwtToken = jwt.sign({username,userId:user._id},process.env.JWT_KEY);
-        res.json({'Auth-Token' : jwtToken});
+        res.json({
+            'Auth-Token' : jwtToken,
+            username : user.username,
+            name : user.name,
+            avatar : user.avatar,
+            userId : user._id,
+            followersCount : user.followers.length,
+            followingsCount : user.followings.length,
+            bio : user.bio,
+            email : user.email,
+            coverImage : user.coverImage,
+            public : user.public
+        });
 
     }
     catch(err){
