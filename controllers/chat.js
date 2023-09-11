@@ -16,4 +16,13 @@ catch(err){
 }
 }
 
-module.exports = {sendChats}
+async function startChat(req,res){
+    const newMsg = new Message({
+        message : req.body.message,
+        sender : req.userId,
+        reciever : req.body.reciever
+    })
+    newMsg.save();
+    res.json({success : true})
+}
+module.exports = {sendChats,startChat}

@@ -7,7 +7,7 @@ const cors = require('cors')
 const socket  = require('socket.io')
 const jwt = require('jsonwebtoken')
 const {verify} = require('./controllers/auth')
-const {sendChats} = require('./controllers/chat.js')
+const {sendChats,startChat} = require('./controllers/chat.js')
 const Message = require('./models/message')
 // setting up env variables
 dotenv.config();
@@ -32,6 +32,7 @@ app.use('/user',userRouter);
 app.use('/auth',authRouter);
 app.use('/request',requestRouter)
 app.get('/chats',verify,sendChats)
+app.post('/chat/start',verify,startChat)
 
 
 // socket 

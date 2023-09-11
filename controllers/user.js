@@ -16,9 +16,9 @@ async function getUser(req, res) {
         const followersCount = user.followers.length;
         const followingsCount = user.followings.length;
 
-        const { name, avatar, coverImage, bio } = user;
+        const { name, avatar, coverImage, bio , _id } = user;
 
-        return res.json({ name, username, avatar, coverImage, bio, followersCount, followingsCount, followingStatus });
+        return res.json({ _id,name, username, avatar, coverImage, bio, followersCount, followingsCount, followingStatus });
     }
     catch (err) {
         res.status(500).json(err);
