@@ -33,6 +33,7 @@ app.use('/auth',authRouter);
 app.use('/request',requestRouter)
 app.get('/chats',verify,sendChats)
 app.post('/chat/start',verify,startChat)
+app.use('/up',(req,res)=>(res.send("Yes up !")))
 
 
 // socket 
