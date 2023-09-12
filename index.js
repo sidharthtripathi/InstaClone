@@ -39,7 +39,8 @@ app.use('/up',(req,res)=>(res.send("Yes up !")))
 // socket 
 const io = socket(server, {
     cors: {
-        origin: ["http://localhost:5173"]
+        origin: ["http://localhost:5173", "https://clonetwi.netlify.app"],
+        methods : ["GET","POST"]
     }
 })
 
