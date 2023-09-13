@@ -1,11 +1,12 @@
 const express = require('express')
 const {verify} = require('../controllers/auth')
 const userRouter = express.Router();
-const {getUser,togglePublic} = require('../controllers/user')
+const {getUser,togglePublic,unfollow} = require('../controllers/user')
 
 
 // get user 
 userRouter.get('/:id',verify,getUser);
+userRouter.put('/unfollow/:userId',verify,unfollow)
 
 // verified user update themselves
 // userRouter.put('/update',verify,updateUser);

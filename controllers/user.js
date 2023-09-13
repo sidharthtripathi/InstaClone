@@ -45,6 +45,18 @@ async function togglePublic(req, res) {
 }
 
 
+async function unfollow(req,res){
+    try{
+        const userId = req.params.userId;
+        const user = User.findOne({username : req.username});
+        const newfollowings = user.followings.filter(id=>(id !== userId))
+        await user.save();
+        res.json({success : true})
+    }
+    catch(err){
+        res.json(err);
+        console.log(err);
+    }
+}
 
-
-module.exports = { togglePublic, getUser };
+module.exports = { togglePublic, getUser , unfollow };
