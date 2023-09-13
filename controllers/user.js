@@ -49,9 +49,13 @@ async function unfollow(req,res){
     try{
         const userId = req.params.userId;
         const user = User.findOne({username : req.username});
+        const celeb = User.findOne({_id : userId})
+        const newFollowers = celeb.followers.filter(id=>(id!==req.userId))
+        celeb.followers = newFollowers;
         const newfollowings = user.followings.filter(id=>(id !== userId))
         user.followings = newfollowings;
         await user.save();
+        await celeb.save();
         res.json({success : true})
     }
     catch(err){
