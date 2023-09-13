@@ -50,6 +50,7 @@ async function unfollow(req,res){
         const userId = req.params.userId;
         const user = User.findOne({username : req.username});
         const newfollowings = user.followings.filter(id=>(id !== userId))
+        user.followings = newfollowings;
         await user.save();
         res.json({success : true})
     }
