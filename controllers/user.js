@@ -48,11 +48,11 @@ async function togglePublic(req, res) {
 async function unfollow(req,res){
     try{
         const userId = req.params.userId;
-        const user = User.findOne({username : req.username});
-        const celeb = User.findOne({_id : userId})
-        const newFollowers = celeb.followers.filter(id=>(id!==req.userId))
+        const user = await User.findOne({username : req.username});
+        const celeb = await  User.findOne({_id : userId})
+        const newFollowers = celeb.followers.filter(id=>(id.toString()!==req.userId))
         celeb.followers = newFollowers;
-        const newfollowings = user.followings.filter(id=>(id !== userId))
+        const newfollowings = user.followings.filter(id=>(id.toString() !== userId))
         user.followings = newfollowings;
         await user.save();
         await celeb.save();
